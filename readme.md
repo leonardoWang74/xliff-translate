@@ -1,5 +1,6 @@
 # xliff translate
 Automatically translate .xlf files.
+Use case for me: translate generated .xlf files from Angular (i18n attribute).
 
 ## Dependencies
 ```bash

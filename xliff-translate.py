@@ -1,18 +1,18 @@
 import os
 
-from translateChatGPT import TranslatorChatGPT
+from translateGoogle import TranslatorGoogle
 from translateWrapper import TranslatorWrapper
 
 FOLDER_PATH = "xliff-files"
 FOLDER_PATH_RESULT = "xliff-results"
 
 # parameters for Google translator
-# LANGUAGE_SOURCE = "en"
-# LANGUAGE_TARGET = "zh-CN"
+LANGUAGE_SOURCE = "en"
+LANGUAGE_TARGET = "zh-CN"
 
 # parameters for chatGPT translator
-LANGUAGE_SOURCE = "english"
-LANGUAGE_TARGET = "chinese"
+# LANGUAGE_SOURCE = "english"
+# LANGUAGE_TARGET = "chinese"
 
 
 class Element:
@@ -175,7 +175,7 @@ def translate_file(translator: TranslatorWrapper, filename: str):
         print([str(el) for el in element_list])
 
         # build list of only texts (without elements)
-        text_list: [str] = [el.text for el in element_list if not el.is_tag]
+        text_list: [str] = [el.text for el in element_list if not el.is_tag and not el.text.isspace()]
 
         # translate texts
         text_list_translated = translator.translate_multiple(text_list)
@@ -183,7 +183,7 @@ def translate_file(translator: TranslatorWrapper, filename: str):
         # replace only texts
         for i in range(len(element_list)):
             el = element_list[i]
-            if el.is_tag:
+            if el.is_tag or el.text.isspace():
                 continue
             el.text = text_list_translated.pop(0)
 
@@ -202,11 +202,11 @@ def main():
                         f"translating.")
 
     # create the translator you want here
-    # translator = TranslatorGoogle()
-    # translator.init(LANGUAGE_SOURCE, LANGUAGE_TARGET)
-
-    translator = TranslatorChatGPT()
+    translator = TranslatorGoogle()
     translator.init(LANGUAGE_SOURCE, LANGUAGE_TARGET)
+
+    # translator = TranslatorChatGPT()
+    # translator.init(LANGUAGE_SOURCE, LANGUAGE_TARGET)
 
     # go through files and translate
     for filename in os.listdir(FOLDER_PATH):
